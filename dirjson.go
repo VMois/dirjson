@@ -3,9 +3,11 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"path"
+	"path/filepath"
 
 	"github.com/fatih/color"
 )
@@ -32,17 +34,25 @@ func NewDirectory(path string) Directory {
 	return newDir
 }
 
+func check(e error) {
+	if e != nil {
+		log.Fatal(e)
+	}
+}
+
 func main() {
 	dirPath := flag.String("d", ".", "a directory")
-	prettyJSON := flag.Bool("p", false, "a pretty json")
+	prettyJSON := flag.Bool("p", false, "a pretty JSON output")
+	outputFlag := flag.String("o", "", "save output to file (filename)")
 	flag.Parse()
+
+	currentRunDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	check(err)
 
 	mainDir := NewDirectory(*dirPath)
 
 	files, err := ioutil.ReadDir(*dirPath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	check(err)
 
 	for _, file := range files {
 		if file.IsDir() {
@@ -51,18 +61,26 @@ func main() {
 			mainDir.Files = append(mainDir.Files, File{file.Name(), file.Size()})
 		}
 	}
+
+	// convert to json
 	var b []byte
 	if *prettyJSON {
 		b, err = json.MarshalIndent(mainDir, "", "  ")
 	} else {
 		b, err = json.Marshal(mainDir)
 	}
+	check(err)
 
-	if err != nil {
-		fmt.Println(err)
-		return
+	// save output to file or print
+	if *outputFlag != "" {
+		outputDir := path.Join(currentRunDir, *outputFlag)
+		f, err := os.Create(outputDir)
+		check(err)
+		defer f.Close()
+		_, err = f.Write(b)
+		check(err)
+	} else {
+		greenOutput := color.New(color.FgGreen)
+		greenOutput.Println(string(b))
 	}
-
-	greenOutput := color.New(color.FgGreen)
-	greenOutput.Println(string(b))
 }
