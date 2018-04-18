@@ -20,7 +20,7 @@ type File struct {
 
 // Directory struct that represents dir
 type Directory struct {
-	Path  string      `json:"path"`
+	Name  string      `json:"name"`
 	Dirs  []Directory `json:"dirs"`
 	Files []File      `json:"files"`
 }
@@ -28,7 +28,7 @@ type Directory struct {
 // NewDirectory creates new Directory struct
 func NewDirectory(path string) Directory {
 	newDir := Directory{}
-	newDir.Path = path
+	newDir.Name = path
 	newDir.Dirs = []Directory{}
 	newDir.Files = []File{}
 	return newDir
