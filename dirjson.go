@@ -80,7 +80,7 @@ func main() {
 		_, err = f.Write(b)
 		check(err)
 	} else {
-		greenOutput := color.New(color.FgGreen)
+		greenOutput := color.New(color.FgHiGreen)
 		greenOutput.Println(string(b))
 	}
 }
