@@ -20,7 +20,7 @@ type File struct {
 
 // Directory struct that represents dir
 type Directory struct {
-	Name  string      `json:"name"`
+	Path  string      `json:"path"`
 	Dirs  []Directory `json:"dirs"`
 	Files []File      `json:"files"`
 }
@@ -28,7 +28,7 @@ type Directory struct {
 // NewDirectory creates new Directory struct
 func NewDirectory(path string) Directory {
 	newDir := Directory{}
-	newDir.Name = path
+	newDir.Path = path
 	newDir.Dirs = []Directory{}
 	newDir.Files = []File{}
 	return newDir
@@ -41,12 +41,12 @@ func check(e error) {
 }
 
 func dirsExplorer(rootDir *Directory) {
-	files, err := ioutil.ReadDir(rootDir.Name)
+	files, err := ioutil.ReadDir(rootDir.Path)
 	check(err)
 
 	for _, file := range files {
 		if file.IsDir() {
-			newDir := NewDirectory(filepath.Join(rootDir.Name, file.Name()))
+			newDir := NewDirectory(filepath.Join(rootDir.Path, file.Name()))
 			dirsExplorer(&newDir)
 			rootDir.Dirs = append(rootDir.Dirs, newDir)
 		} else {
