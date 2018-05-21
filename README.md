@@ -21,34 +21,27 @@ $ dirjson -p
 ```
 ```json
 {
-  "name": ".",
+  "path": "test_dir/",
   "dirs": [
     {
-      "name": ".git",
+      "path": "test_dir/test2",
       "dirs": [],
-      "files": []
+      "files": [
+        {
+          "name": "file.txt",
+          "size": 4
+        }
+      ]
     }
   ],
   "files": [
     {
-      "name": ".gitignore",
-      "size": 7
+      "name": "hello.txt",
+      "size": 5
     },
     {
-      "name": "LICENSE",
-      "size": 1079
-    },
-    {
-      "name": "README.md",
-      "size": 585
-    },
-    {
-      "name": "dirjson",
-      "size": 2312026
-    },
-    {
-      "name": "dirjson.go",
-      "size": 1711
+      "name": "world.txt",
+      "size": 5
     }
   ]
 }
