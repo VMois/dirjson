@@ -3,11 +3,13 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 
 	"github.com/fatih/color"
 )
@@ -55,6 +57,22 @@ func dirsExplorer(rootDir *Directory) {
 	}
 }
 
+// PrintMemUsage outputs the current, total and OS memory being used. As well as the number
+// of garage collection cycles completed.
+func PrintMemUsage() {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	// For info on each, see: https://golang.org/pkg/runtime/#MemStats
+	fmt.Printf("Alloc = %v MiB", bToMb(m.Alloc))
+	fmt.Printf("\tTotalAlloc = %v MiB", bToMb(m.TotalAlloc))
+	fmt.Printf("\tSys = %v MiB", bToMb(m.Sys))
+	fmt.Printf("\tNumGC = %v\n", m.NumGC)
+}
+
+func bToMb(b uint64) uint64 {
+	return b / 1024 / 1024
+}
+
 func main() {
 	dirPath := flag.String("d", ".", "a directory")
 	prettyJSON := flag.Bool("p", false, "a pretty JSON output")
@@ -64,8 +82,10 @@ func main() {
 	currentRunDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	check(err)
 
+	PrintMemUsage()
 	mainDir := NewDirectory(*dirPath)
 	dirsExplorer(&mainDir)
+	PrintMemUsage()
 
 	// convert to json
 	var b []byte
