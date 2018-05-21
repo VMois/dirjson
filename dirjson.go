@@ -40,6 +40,21 @@ func check(e error) {
 	}
 }
 
+func dirsExplorer(rootDir *Directory) {
+	files, err := ioutil.ReadDir(rootDir.Name)
+	check(err)
+
+	for _, file := range files {
+		if file.IsDir() {
+			newDir := NewDirectory(filepath.Join(rootDir.Name, file.Name()))
+			dirsExplorer(&newDir)
+			rootDir.Dirs = append(rootDir.Dirs, newDir)
+		} else {
+			rootDir.Files = append(rootDir.Files, File{file.Name(), file.Size()})
+		}
+	}
+}
+
 func main() {
 	dirPath := flag.String("d", ".", "a directory")
 	prettyJSON := flag.Bool("p", false, "a pretty JSON output")
@@ -50,17 +65,7 @@ func main() {
 	check(err)
 
 	mainDir := NewDirectory(*dirPath)
-
-	files, err := ioutil.ReadDir(*dirPath)
-	check(err)
-
-	for _, file := range files {
-		if file.IsDir() {
-			mainDir.Dirs = append(mainDir.Dirs, NewDirectory(file.Name()))
-		} else {
-			mainDir.Files = append(mainDir.Files, File{file.Name(), file.Size()})
-		}
-	}
+	dirsExplorer(&mainDir)
 
 	// convert to json
 	var b []byte
