@@ -8,7 +8,7 @@ import (
 	"path"
 	"path/filepath"
 
-	lib "github.com/VMois/dirjson/libdirjson"
+	lib "github.com/VMois/dirjson/lib"
 	"github.com/fatih/color"
 )
 

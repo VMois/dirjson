@@ -1,4 +1,4 @@
-package libdirjson
+package lib
 
 import (
 	"io/ioutil"
