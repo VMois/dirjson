@@ -3,36 +3,14 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"io/ioutil"
 	"log"
 	"os"
 	"path"
 	"path/filepath"
 
+	lib "github.com/VMois/dirjson/libdirjson"
 	"github.com/fatih/color"
 )
-
-// File struct that represents file
-type File struct {
-	Name string `json:"name"`
-	Size int64  `json:"size"`
-}
-
-// Directory struct that represents dir
-type Directory struct {
-	Path  string      `json:"path"`
-	Dirs  []Directory `json:"dirs"`
-	Files []File      `json:"files"`
-}
-
-// NewDirectory creates new Directory struct
-func NewDirectory(path string) Directory {
-	newDir := Directory{}
-	newDir.Path = path
-	newDir.Dirs = []Directory{}
-	newDir.Files = []File{}
-	return newDir
-}
 
 func check(e error) {
 	if e != nil {
@@ -40,39 +18,25 @@ func check(e error) {
 	}
 }
 
-func dirsExplorer(rootDir *Directory) {
-	files, err := ioutil.ReadDir(rootDir.Path)
-	check(err)
-
-	for _, file := range files {
-		if file.IsDir() {
-			newDir := NewDirectory(filepath.Join(rootDir.Path, file.Name()))
-			dirsExplorer(&newDir)
-			rootDir.Dirs = append(rootDir.Dirs, newDir)
-		} else {
-			rootDir.Files = append(rootDir.Files, File{file.Name(), file.Size()})
-		}
-	}
-}
-
 func main() {
 	dirPath := flag.String("d", ".", "a directory")
 	prettyJSON := flag.Bool("p", false, "a pretty JSON output")
 	outputFlag := flag.String("o", "", "save output to file (filename)")
+	recursiveFlag := flag.Bool("r", false, "set recursive directory scan")
 	flag.Parse()
 
 	currentRunDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	check(err)
 
-	mainDir := NewDirectory(*dirPath)
-	dirsExplorer(&mainDir)
+	rootDir := lib.NewDirectory(*dirPath)
+	lib.DirsExplorer(&rootDir, *recursiveFlag)
 
 	// convert to json
 	var b []byte
 	if *prettyJSON {
-		b, err = json.MarshalIndent(mainDir, "", "  ")
+		b, err = json.MarshalIndent(rootDir, "", "  ")
 	} else {
-		b, err = json.Marshal(mainDir)
+		b, err = json.Marshal(rootDir)
 	}
 	check(err)
 
