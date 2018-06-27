@@ -34,9 +34,9 @@ func main() {
 	// convert to json
 	var b []byte
 	if *prettyJSON {
-		b, err = json.MarshalIndent(rootDir, "", "  ")
+		b, err = json.MarshalIndent(&rootDir, "", "  ")
 	} else {
-		b, err = json.Marshal(rootDir)
+		b, err = json.Marshal(&rootDir)
 	}
 	check(err)
 
