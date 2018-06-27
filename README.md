@@ -70,4 +70,4 @@ $ ./dirjson -o folder_structure.json
 I'm open for any contributions. If you found a bug, or have a new feature/refactoring proposal, docs fix etc. please, open an issue for discussions. Thank you! :)
 
 ## License
-MIT License. More info in [LICENSE.md](LICENSE.md)
+MIT License. More info in [LICENSE](LICENSE)
