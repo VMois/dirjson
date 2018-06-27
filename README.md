@@ -11,7 +11,7 @@ $ cd dirjson
 2. Download dependencies and build
 ```sh
 $ go get
-$ go build dirjson.go
+$ go build -o dirjson.go
 ```
 3. Run
 ```sh
@@ -22,6 +22,11 @@ $ ./dirjson -p
 - To get help:
 ```sh
 $ ./dirjson -h
+```
+
+- to specify directory:
+```sh
+$ ./dirjson -d ./test_dir
 ```
 
 - pretty JSON output of current directory:
